@@ -1,23 +1,15 @@
 version: '3.8'
-services: 
+services:
     main:
-        build: 
-            context: .
-            dockerfile: Dockerfile
-        command: 'php artisan serve --host 0.0.0.0'
-        volumes:
-            - .:/sklep_gry
+        image: 19927a09b76c/sklep_gry:main
         ports:
             - 8000:8000
-        depends_on: 
+        depends_on:
             - db
+        command: >
+            sh -c "php artisan migrate --seed &&
+            php artisan db:seed --class ProductsSeeder &&
+            php artisan db:seed --class CategoriesSeeder &&
+            php artisan serve --host=0.0.0.0"
     db:
-        image: mariadb
-        environment: 
-            MYSQL_DATABASE: sklep_gry
-            MYSQL_USER: root
-            MYSQL_ROOT: root
-            MYSQL_PASSWORD: 123456
-            MYSQL_ROOT_PASSWORD: 123456
-        ports:
-            - 8080:8080
+        image: 19927a09b76c/sklep_gry:mysql
